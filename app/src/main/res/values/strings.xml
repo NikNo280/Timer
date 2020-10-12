@@ -14,4 +14,11 @@
     <string name="set">Set</string>
     <string name="pause">Pause</string>
     <string name="name">Name : </string>
+    <string name="preparationT">Preparation : </string>
+    <string name="warm_upT">Warm-up : </string>
+    <string name="workT">Work : </string>
+    <string name="relaxationT">Relaxation : </string>
+    <string name="cycleT">Cycle : </string>
+    <string name="setT">Set : </string>
+    <string name="pauseT">Pause : </string>
 </resources>
