@@ -3,6 +3,6 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/src/main/assets/Timers.db" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/app/src/main/assets/Timers.db-journal" charset="windows-1251" />
-    <file url="PROJECT" charset="windows-1251" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

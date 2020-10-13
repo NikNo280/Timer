@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TimerPage.TimerActivity"></activity>
+        <activity android:name=".EditPage.CreateActivity"></activity>
+        <activity android:name=".TimerPage.TimerActivity" />
         <activity android:name=".SettingsPage.SettingsActivity" />
         <activity android:name=".EditPage.EditActivity" />
         <activity android:name=".HomePage.HomeActivity" />
