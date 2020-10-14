@@ -123,8 +123,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public List<Timer> getAllTimer() {
-        Log.i(TAG, "MyDatabaseHelper.getAllNotes ... " );
-
         List<Timer> timerList = new ArrayList<Timer>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_NAME;
@@ -153,6 +151,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // return note list
         return timerList;
     }
+    
 
     public int updateTimer(Timer timer) {
         SQLiteDatabase db = this.getWritableDatabase();

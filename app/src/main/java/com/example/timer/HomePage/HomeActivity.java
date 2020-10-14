@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
+
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,6 +29,7 @@ import com.example.timer.EditPage.EditActivity;
 import com.example.timer.MainViewModel;
 import com.example.timer.R;
 import com.example.timer.Timer;
+import com.example.timer.TimerPage.TimerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +98,9 @@ public class HomeActivity extends AppCompatActivity{
         final Timer selectedTimer = (Timer) this.listView.getItemAtPosition(info.position);
 
         if(item.getItemId() == MENU_ITEM_VIEW){
-            Toast.makeText(getApplicationContext(),selectedTimer.getPreparationTime(),Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, TimerActivity.class);
+            intent.putExtra("timer", selectedTimer);
+            this.startActivityForResult(intent, MY_REQUEST_CODE);
         }
         else if(item.getItemId() == MENU_ITEM_CREATE){
             Intent intent = new Intent(this, CreateActivity.class);
@@ -105,7 +109,7 @@ public class HomeActivity extends AppCompatActivity{
         else if(item.getItemId() == MENU_ITEM_EDIT ){
             Intent intent = new Intent(this, CreateActivity.class);
             intent.putExtra("timer", selectedTimer);
-            this.startActivityForResult(intent,MY_REQUEST_CODE);
+            this.startActivityForResult(intent, MY_REQUEST_CODE);
         }
         else if(item.getItemId() == MENU_ITEM_DELETE){
             // Ask before deleting.
@@ -114,7 +118,7 @@ public class HomeActivity extends AppCompatActivity{
                     .setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            deleteNote(selectedTimer);
+                            deleteTimer(selectedTimer);
                         }
                     })
                     .setNegativeButton("No", null)
@@ -127,7 +131,7 @@ public class HomeActivity extends AppCompatActivity{
     }
 
     // Delete a record
-    private void deleteNote(Timer timer)  {
+    private void deleteTimer(Timer timer)  {
         DatabaseHelper db = new DatabaseHelper(this);
         db.deleteTimer(timer);
         this.timerList.remove(timer);

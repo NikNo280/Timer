@@ -9,6 +9,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainViewModel extends AndroidViewModel {
     private final MutableLiveData<String> timerName = new MutableLiveData<>("");
     private final MutableLiveData<String> preparationTime = new MutableLiveData<>("");
@@ -39,4 +42,23 @@ public class MainViewModel extends AndroidViewModel {
 
     public LiveData<String> getPauseTime(){return pauseTime;}
 
+
+    public List<String> getListToAdapter(Timer timer)
+    {
+        List<String> timerList = new ArrayList<String>();
+        int countCycle = Integer.parseInt(timer.getCycleCount());
+        int countSet = Integer.parseInt(timer.getSetCount());
+        for(int i = 0; i < countSet; i++)
+        {
+            timerList.add("Preparation : " + timer.getPreparationTime());
+            for(int j = 0; j < countCycle; j++)
+            {
+                timerList.add("Warm : " + timer.getWarmTime());
+                timerList.add("Work : " + timer.getWorkTime());
+                timerList.add("Relaxation : " + timer.getRelaxationTime());
+            }
+            timerList.add("PauseTime : " + timer.getPauseTime());
+        }
+        return timerList;
+    }
 }
