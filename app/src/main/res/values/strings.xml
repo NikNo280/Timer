@@ -21,4 +21,6 @@
     <string name="cycleT">Cycle : </string>
     <string name="setT">Set : </string>
     <string name="pauseT">Pause : </string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 </resources>

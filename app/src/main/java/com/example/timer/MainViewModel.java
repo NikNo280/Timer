@@ -2,6 +2,7 @@ package com.example.timer;
 
 import android.app.Application;
 
+import android.os.CountDownTimer;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,52 +14,108 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
-    private final MutableLiveData<String> timerName = new MutableLiveData<>("");
-    private final MutableLiveData<String> preparationTime = new MutableLiveData<>("");
-    private final MutableLiveData<String> warmTime = new MutableLiveData<>("");
-    private final MutableLiveData<String> workTime = new MutableLiveData<>("");
-    private final MutableLiveData<String> relaxationTime = new MutableLiveData<>("");
-    private final MutableLiveData<String> cycleCount = new MutableLiveData<>("");
-    private final MutableLiveData<String> setCount = new MutableLiveData<>("");
-    private final MutableLiveData<String> pauseTime = new MutableLiveData<>("");
-
+    private final MutableLiveData<String> editTimer = new MutableLiveData<>("");
+    private CountDownTimer countDownTimer;
     public MainViewModel(@NonNull Application application) {
         super(application);
     }
+    private int position = 0;
+    private int timerBuffer;
+    private boolean isTimerStart = false;
+    private boolean isTimerStop = false;
+    List<Integer> timerList = new ArrayList<Integer>();
 
-    public LiveData<String> getTimerName(){return timerName;}
-
-    public LiveData<String> getPreparationTime(){return preparationTime;}
-
-    public LiveData<String> getWarmTime(){return warmTime;}
-
-    public LiveData<String> getWorkTime(){return workTime;}
-
-    public LiveData<String> getRelaxationTime(){return relaxationTime;}
-
-    public LiveData<String> getCycleCount(){return cycleCount;}
-
-    public LiveData<String> getSetCount(){return setCount;}
-
-    public LiveData<String> getPauseTime(){return pauseTime;}
-
-
-    public List<String> getListToAdapter(Timer timer)
+    public LiveData<String> getEditTimer()
     {
-        List<String> timerList = new ArrayList<String>();
+        return editTimer;
+    }
+
+    public void setNewTimerPosition(int position) {
+        if (isTimerStart) {
+            countDownTimer.cancel();
+            isTimerStop = false;
+        }
+        this.position = position;
+        startTimer();
+    }
+
+    public void stopTimer() {
+        if(isTimerStart || !editTimer.getValue().equals("Все"))
+        {
+            timerBuffer = Integer.parseInt(editTimer.getValue()) * 1000;
+            countDownTimer.cancel();
+            isTimerStop = true;
+        }
+        else
+        {
+            Toast toast = Toast.makeText(getApplication(), "Timer not started", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+    public void startTimer()
+    {
+        int second;
+        if(isTimerStop)
+        {
+            second = timerBuffer;
+            isTimerStop = false;
+        }
+        else
+        {
+            second = timerList.get(position);
+        }
+        isTimerStart = true;
+        countDownTimer = new CountDownTimer(second, 100) {
+            @Override
+            public void onTick(long l) {
+                editTimer.setValue("" + l / 1000);
+            }
+
+            @Override
+            public void onFinish() {
+                if(timerList.size() - 1> position)
+                {
+                    position++;
+                    countDownTimer.cancel();
+                    startTimer();
+                }
+                else
+                {
+                    position = 0;
+                    editTimer.setValue("Все");
+                }
+            }
+        }.start();
+    }
+
+    public List<String> getTimerList(Timer timer)
+    {
+        List<String> stringTimerList = new ArrayList<String>();
         int countCycle = Integer.parseInt(timer.getCycleCount());
         int countSet = Integer.parseInt(timer.getSetCount());
+        int count = 1;
         for(int i = 0; i < countSet; i++)
         {
-            timerList.add("Preparation : " + timer.getPreparationTime());
+            stringTimerList.add(count + ". Preparation : " + timer.getPreparationTime());
+            timerList.add(Integer.parseInt(timer.getPreparationTime()) * 1000);
+            count++;
             for(int j = 0; j < countCycle; j++)
             {
-                timerList.add("Warm : " + timer.getWarmTime());
-                timerList.add("Work : " + timer.getWorkTime());
-                timerList.add("Relaxation : " + timer.getRelaxationTime());
+                stringTimerList.add(count + ". Warm : " + timer.getWarmTime());
+                timerList.add(Integer.parseInt(timer.getWarmTime()) * 1000);
+                count++;
+                stringTimerList.add(count + ". Work : " + timer.getWorkTime());
+                timerList.add(Integer.parseInt(timer.getWorkTime()) * 1000);
+                count++;
+                stringTimerList.add(count + ". Relaxation : " + timer.getRelaxationTime());
+                timerList.add(Integer.parseInt(timer.getRelaxationTime()) * 1000);
+                count++;
             }
-            timerList.add("PauseTime : " + timer.getPauseTime());
+            stringTimerList.add(count + ". PauseTime : " + timer.getPauseTime());
+            timerList.add(Integer.parseInt(timer.getPauseTime()) * 1000);
+            count++;
         }
-        return timerList;
+        return stringTimerList;
     }
 }
