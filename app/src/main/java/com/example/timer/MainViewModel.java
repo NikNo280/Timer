@@ -53,6 +53,14 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
+    public void deleteTimer()
+    {
+        if(isTimerStart)
+        {
+            countDownTimer.cancel();
+        }
+    }
+
     public void startTimer()
     {
         int second;

@@ -46,7 +46,10 @@ public class TimerActivity extends AppCompatActivity {
         // Assign adapter to ListView
         mainViewModel.getEditTimer().observe(this, value -> textView_timer.setText(value));
         this.listView.setAdapter(this.listViewAdapter);
-        btnStart.setOnClickListener(item -> mainViewModel.startTimer());
+        btnStart.setOnClickListener(item -> {
+            mainViewModel.deleteTimer();
+            mainViewModel.startTimer();
+        });
         btnStop.setOnClickListener(item -> mainViewModel.stopTimer());
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
