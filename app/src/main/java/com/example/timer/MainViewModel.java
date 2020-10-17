@@ -40,7 +40,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void stopTimer() {
-        if(isTimerStart || !editTimer.getValue().equals("Все"))
+        if(isTimerStart && !editTimer.getValue().equals("Все"))
         {
             timerBuffer = Integer.parseInt(editTimer.getValue()) * 1000;
             countDownTimer.cancel();
