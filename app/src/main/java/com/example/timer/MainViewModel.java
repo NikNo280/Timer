@@ -2,6 +2,7 @@ package com.example.timer;
 
 import android.app.Application;
 
+import android.app.Service;
 import android.os.CountDownTimer;
 import android.widget.Toast;
 
@@ -21,7 +22,6 @@ public class MainViewModel extends AndroidViewModel {
     }
     private int position = 0;
     private int timerBuffer;
-    private boolean isTimerStart = false;
     private boolean isTimerStop = false;
     List<Integer> timerList = new ArrayList<Integer>();
 
@@ -31,7 +31,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void setNewTimerPosition(int position) {
-        if (isTimerStart) {
+        if (countDownTimer != null ) {
             countDownTimer.cancel();
             isTimerStop = false;
         }
@@ -40,7 +40,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void stopTimer() {
-        if(isTimerStart && !editTimer.getValue().equals("Все"))
+        if(countDownTimer != null && !editTimer.getValue().equals("Все"))
         {
             timerBuffer = Integer.parseInt(editTimer.getValue()) * 1000;
             countDownTimer.cancel();
@@ -55,7 +55,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public void deleteTimer()
     {
-        if(isTimerStart)
+        if(countDownTimer != null)
         {
             countDownTimer.cancel();
         }
@@ -73,7 +73,6 @@ public class MainViewModel extends AndroidViewModel {
         {
             second = timerList.get(position);
         }
-        isTimerStart = true;
         countDownTimer = new CountDownTimer(second, 100) {
             @Override
             public void onTick(long l) {
