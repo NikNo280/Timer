@@ -31,19 +31,11 @@ public class TimerActivity extends AppCompatActivity {
     private ArrayAdapter<String> listViewAdapter;
     public MainViewModel mainViewModel ;
     Button btnStart, btnStop;
-
+    Intent intentService;
 
     BroadcastReceiver br;
     public final static String BROADCAST_ACTION = "ru.startandroid.develop.p0961servicebackbroadcast";
-    final int TASK1_CODE = 1;
-    final int TASK2_CODE = 2;
-    final int TASK3_CODE = 3;
-    public final static int STATUS_START = 100;
-    public final static int STATUS_FINISH = 200;
-    public final static String PARAM_TIME = "time";
-    public final static String PARAM_TASK = "task";
     public final static String PARAM_RESULT = "result";
-    public final static String PARAM_STATUS = "status";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +54,26 @@ public class TimerActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, this.timerList);
         this.listView.setAdapter(this.listViewAdapter);
 
-        Intent intenttt = new Intent(this, TimerService.class).putExtra("list", mainViewModel.getIntList()).putExtra("operationCode", 1);
+        intentService = new Intent(this, TimerService.class).putExtra("list", mainViewModel.getIntList());
+
         btnStart.setOnClickListener(item -> {
-            startService(intenttt);
+            intentService.putExtra("operationCode", 1);
+            startService(intentService);
         });
 
+        btnStop.setOnClickListener(item -> {
+            intentService.putExtra("operationCode", 2);
+            startService(intentService);
+        });
 
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+            {
+                intentService.putExtra("operationCode", 3).putExtra("position", position);
+                startService(intentService);
+            }
+        });
         br = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 int result = intent.getIntExtra(PARAM_RESULT, 0);
@@ -82,5 +88,6 @@ public class TimerActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(br);
+        stopService(intentService);
     }
 }

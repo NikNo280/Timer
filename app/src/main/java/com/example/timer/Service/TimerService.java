@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.timer.TimerPage.TimerActivity;
 
@@ -15,25 +16,36 @@ public class TimerService extends Service {
 
     final String LOG_TAG = "myLogs";
     int[] timerList;
-    int position;
+    private int position;
+    private int timerBuffer;
+    private boolean isTimerStop = false;
+    private boolean isStarted = false;
     int operationCode;
     CountDownTimer countDownTimer;
 
     public void onCreate() {
         super.onCreate();
-        Log.d(LOG_TAG, "MyService onCreate");
     }
 
     public void onDestroy() {
         super.onDestroy();
-        Log.d(LOG_TAG, "MyService onDestroy");
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(LOG_TAG, "MyService onStartCommand");
         timerList = intent.getIntArrayExtra("list");
+        operationCode = intent.getIntExtra("operationCode", 0);
+        if(countDownTimer != null)
+        {
+            countDownTimer.cancel();
+        }
 
+        if(operationCode == 3)
+        {
+            position = intent.getIntExtra("position", 0);
+            operationCode = 1;
+        }
         run();
+        isStarted = true;
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -42,27 +54,54 @@ public class TimerService extends Service {
     }
 
     public void run() {
-        countDownTimer = new CountDownTimer(timerList[position], 100) {
-            @Override
-            public void onTick(long l) {
-                timerUpdate((int) l);
+        if(operationCode == 1)
+        {
+            int second;
+            if(isTimerStop)
+            {
+                second = timerBuffer;
+                isTimerStop = false;
             }
+            else
+            {
+                second = timerList[position];
+            }
+            countDownTimer = new CountDownTimer(second, 100) {
+                @Override
+                public void onTick(long l) {
+                    timerUpdate((int) l);
+                    timerBuffer = (int)l;
+                }
 
-            @Override
-            public void onFinish() {
-                if(timerList.length - 1> position)
-                {
-                    position++;
-                    countDownTimer.cancel();
-                    run();
+                @Override
+                public void onFinish() {
+                    if(timerList.length - 1> position)
+                    {
+                        position++;
+                        countDownTimer.cancel();
+                        run();
+                    }
+                    else
+                    {
+                        position = 0;
+                        timerUpdate(0);
+                    }
                 }
-                else
-                {
-                    position = 0;
-                    timerUpdate(0);
-                }
+            }.start();
+        }
+        else if(operationCode == 2)
+        {
+            if(countDownTimer != null)
+            {
+                countDownTimer.cancel();
+                isTimerStop = true;
             }
-        }.start();
+            else
+            {
+                Toast toast = Toast.makeText(getApplication(), "Timer not started", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
     }
 
     private void timerUpdate(int time){
