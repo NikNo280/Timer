@@ -1,13 +1,13 @@
-package com.example.timer;
+package com.example.timer.DBHelper;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.Context;
-import android.util.Log;
 
-import java.sql.Time;
+import com.example.timer.Model.Timer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,20 +61,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // If Note table has no data
-    // default, Insert 2 records.
-    public void createDefaultTimersIfNeed()  {
-        int count = this.getTimerCount();
-        if(count ==0 ) {
-            Timer timer1 = new Timer("Timer1", "1", "2",
-                    "3", "4", "5", "6", "7");
-            Timer timer2 = new Timer("Timer2", "7", "6",
-                    "5", "4", "3", "2", "1");
-            this.addTimer(timer1);
-            this.addTimer(timer2);
-        }
-    }
-
     public void addTimer(Timer timer) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -121,6 +107,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return timer;
     }
 
+    public void deleteTimers()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        String script = "CREATE TABLE " + TABLE_NAME + "("
+                + TIMER_ID + " INTEGER PRIMARY KEY,"
+                + TIMER_NAME + " TEXT,"
+                + PREPARATION_TIME + " TEXT,"
+                + WARM_TIME + " TEXT,"
+                + WORK_TIME + " TEXT,"
+                + RELAXATION_TIME + " TEXT,"
+                + CYCLE_TIME + " TEXT,"
+                + SET_COUNT + " TEXT,"
+                + PAUSE_TIME + " TEXT" + ")";
+        db.execSQL(script);
+    }
 
     public List<Timer> getAllTimer() {
         List<Timer> timerList = new ArrayList<Timer>();

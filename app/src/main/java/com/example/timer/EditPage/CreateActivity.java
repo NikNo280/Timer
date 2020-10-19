@@ -1,6 +1,7 @@
 package com.example.timer.EditPage;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,9 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.timer.DatabaseHelper;
+import com.example.timer.DBHelper.DatabaseHelper;
 import com.example.timer.R;
-import com.example.timer.Timer;
+import com.example.timer.Model.Timer;
+import com.example.timer.ViewModel.MainViewModel;
 
 public class CreateActivity extends AppCompatActivity {
 
@@ -24,11 +26,13 @@ public class CreateActivity extends AppCompatActivity {
     private Timer timer;
     private boolean needRefresh;
     private int mode;
+    public MainViewModel mainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
+        mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
 
         this.editName = (EditText)this.findViewById(R.id.edit_name);
         this.editPreparation = (EditText)this.findViewById(R.id.edit_preparation);
@@ -66,10 +70,7 @@ public class CreateActivity extends AppCompatActivity {
         }
     }
 
-    // User Click on the Save button.
     public void buttonSaveClicked()  {
-        DatabaseHelper db = new DatabaseHelper(this);
-
         String name = this.editName.getText().toString();
         String preparation = this.editPreparation.getText().toString();
         String warm = this.editWarm.getText().toString();
@@ -87,45 +88,29 @@ public class CreateActivity extends AppCompatActivity {
             return;
         }
 
-        if(mode == MODE_CREATE ) {
-            this.timer= new Timer(name, preparation, warm, work, relaxation, cycle, set, pause);
-            db.addTimer(timer);
-        } else  {
-            this.timer.setTimerName(name);
-            this.timer.setPreparationTime(preparation);
-            this.timer.setWarmTime(warm);
-            this.timer.setWorkTime(work);
-            this.timer.setRelaxationTime(relaxation);
-            this.timer.setCycleCount(cycle);
-            this.timer.setSetCount(set);
-            this.timer.setPauseTime(pause);
-            db.updateTimer(timer);
+        if(mode == MODE_CREATE )
+        {
+            mainViewModel.addTimer(name, preparation, warm, work, relaxation, cycle, set, pause);
         }
-
+        else
+        {
+           mainViewModel.updateTimer(timer, name, preparation, warm, work, relaxation, cycle, set, pause);
+        }
         this.needRefresh = true;
-
-        // Back to MainActivity.
         this.onBackPressed();
     }
 
-    // User Click on the Cancel button.
+
     public void buttonCancelClicked()  {
-        // Do nothing, back MainActivity.
         this.onBackPressed();
     }
 
-    // When completed this Activity,
-    // Send feedback to the Activity called it.
+
     @Override
     public void finish() {
 
-        // Create Intent
         Intent data = new Intent();
-
-        // Request MainActivity refresh its ListView (or not).
         data.putExtra("needRefresh", needRefresh);
-
-        // Set Result
         this.setResult(Activity.RESULT_OK, data);
         super.finish();
     }

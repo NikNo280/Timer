@@ -15,10 +15,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.timer.MainViewModel;
+import com.example.timer.ViewModel.MainViewModel;
 import com.example.timer.R;
 import com.example.timer.Service.TimerService;
-import com.example.timer.Timer;
+import com.example.timer.Model.Timer;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class TimerActivity extends AppCompatActivity {
         this.listView = (ListView) findViewById(R.id.listView);
         Intent intent = this.getIntent();
         this.timer = (Timer) intent.getSerializableExtra("timer");
-        timerList = mainViewModel.getTimerList(timer);
+        timerList = mainViewModel.getTimerStringList(timer);
         this.btnStart = findViewById(R.id.button_start);
         this.textView_timer = findViewById(R.id.textView_timer);
         this.btnStop = findViewById(R.id.button_stop);

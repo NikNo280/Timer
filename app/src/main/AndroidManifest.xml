@@ -18,9 +18,8 @@
         <activity android:name=".EditPage.CreateActivity" />
         <activity android:name=".TimerPage.TimerActivity" />
         <activity android:name=".SettingsPage.SettingsActivity" />
-        <activity android:name=".EditPage.EditActivity" />
         <activity android:name=".HomePage.HomeActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainPage.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

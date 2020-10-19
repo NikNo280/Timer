@@ -23,4 +23,6 @@
     <string name="pauseT">Pause : </string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="button_clear">Clear</string>
+    <string name="button_add">Add</string>
 </resources>
