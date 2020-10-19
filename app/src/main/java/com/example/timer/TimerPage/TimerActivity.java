@@ -3,7 +3,10 @@ package com.example.timer.TimerPage;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.timer.MainViewModel;
 import com.example.timer.R;
+import com.example.timer.Service.TimerService;
 import com.example.timer.Timer;
 
 import java.util.List;
@@ -27,12 +31,25 @@ public class TimerActivity extends AppCompatActivity {
     private ArrayAdapter<String> listViewAdapter;
     public MainViewModel mainViewModel ;
     Button btnStart, btnStop;
+
+
+    BroadcastReceiver br;
+    public final static String BROADCAST_ACTION = "ru.startandroid.develop.p0961servicebackbroadcast";
+    final int TASK1_CODE = 1;
+    final int TASK2_CODE = 2;
+    final int TASK3_CODE = 3;
+    public final static int STATUS_START = 100;
+    public final static int STATUS_FINISH = 200;
+    public final static String PARAM_TIME = "time";
+    public final static String PARAM_TASK = "task";
+    public final static String PARAM_RESULT = "result";
+    public final static String PARAM_STATUS = "status";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
         mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
-
 
         this.listView = (ListView) findViewById(R.id.listView);
         Intent intent = this.getIntent();
@@ -43,20 +60,27 @@ public class TimerActivity extends AppCompatActivity {
         this.btnStop = findViewById(R.id.button_stop);
         this.listViewAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, this.timerList);
-        // Assign adapter to ListView
-        mainViewModel.getEditTimer().observe(this, value -> textView_timer.setText(value));
         this.listView.setAdapter(this.listViewAdapter);
+
+        Intent intenttt = new Intent(this, TimerService.class).putExtra("list", mainViewModel.getIntList()).putExtra("operationCode", 1);
         btnStart.setOnClickListener(item -> {
-            mainViewModel.deleteTimer();
-            mainViewModel.startTimer();
+            startService(intenttt);
         });
-        btnStop.setOnClickListener(item -> mainViewModel.stopTimer());
-        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-            {
-                mainViewModel.setNewTimerPosition(position);
+
+
+        br = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                int result = intent.getIntExtra(PARAM_RESULT, 0);
+                textView_timer.setText("" + result);
             }
-        });
+        };
+        IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(br, intFilt);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(br);
     }
 }

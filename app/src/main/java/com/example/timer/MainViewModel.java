@@ -39,6 +39,18 @@ public class MainViewModel extends AndroidViewModel {
         startTimer();
     }
 
+    public int[] getIntList()
+    {
+        int count = timerList.size();
+        int[] timers = new int[count];
+        for(int i = 0; i < count; i++)
+        {
+            timers[i] = timerList.get(i);
+        }
+        return timers;
+    }
+
+
     public void stopTimer() {
         if(countDownTimer != null && !editTimer.getValue().equals("Все"))
         {
