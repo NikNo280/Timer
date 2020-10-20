@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
 
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Database Name
     private static final String DATABASE_NAME = "TimersDB";
@@ -33,6 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String CYCLE_TIME = "cycleCount";
     public static final String SET_COUNT = "setCount";
     public static final String PAUSE_TIME = "pauseTime";
+    public static final String COLOR = "color";
 
     public DatabaseHelper(Context context)  {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -49,8 +50,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + RELAXATION_TIME + " TEXT,"
                 + CYCLE_TIME + " TEXT,"
                 + SET_COUNT + " TEXT,"
-                + PAUSE_TIME + " TEXT" + ")";
-        // Execute Script.
+                + PAUSE_TIME + " TEXT,"
+                + COLOR + " TEXT" + ")";
         db.execSQL(script);
     }
 
@@ -72,7 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(CYCLE_TIME, timer.getCycleCount());
         values.put(SET_COUNT, timer.getSetCount());
         values.put(PAUSE_TIME, timer.getPauseTime());
-
+        values.put(COLOR, timer.getColor());
         // Inserting Row
         db.insert(TABLE_NAME, null, values);
 
@@ -94,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_NAME, new String[] { TIMER_ID,
                         TIMER_NAME, PREPARATION_TIME , WARM_TIME,
                 WORK_TIME, RELAXATION_TIME, CYCLE_TIME,
-                SET_COUNT, PAUSE_TIME}, TIMER_ID + "=?",
+                SET_COUNT, PAUSE_TIME, COLOR}, TIMER_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
@@ -102,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Timer timer = new Timer(Integer.parseInt(cursor.getString(0)),
                 cursor.getString(1), cursor.getString(2), cursor.getString(3),
                 cursor.getString(4), cursor.getString(5), cursor.getString(6),
-                cursor.getString(7), cursor.getString(8));
+                cursor.getString(7), cursor.getString(8), cursor.getString(9));
         // return note
         return timer;
     }
@@ -120,7 +121,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + RELAXATION_TIME + " TEXT,"
                 + CYCLE_TIME + " TEXT,"
                 + SET_COUNT + " TEXT,"
-                + PAUSE_TIME + " TEXT" + ")";
+                + PAUSE_TIME + " TEXT,"
+                + COLOR + " TEXT" + ")";
         db.execSQL(script);
     }
 
@@ -145,6 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 timer.setCycleCount(cursor.getString(6));
                 timer.setSetCount(cursor.getString(7));
                 timer.setPauseTime(cursor.getString(8));
+                timer.setColor(cursor.getString(9));
                 // Adding note to list
                 timerList.add(timer);
             } while (cursor.moveToNext());
@@ -167,6 +170,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(CYCLE_TIME, timer.getCycleCount());
         values.put(SET_COUNT, timer.getSetCount());
         values.put(PAUSE_TIME, timer.getPauseTime());
+        values.put(COLOR, timer.getColor());
 
         // updating row
         return db.update(TABLE_NAME, values, TIMER_ID + " = ?",

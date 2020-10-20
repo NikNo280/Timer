@@ -6,15 +6,22 @@ import androidx.lifecycle.ViewModelProviders;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.Toast;
 
 import com.example.timer.DBHelper.DatabaseHelper;
+import com.example.timer.Pallet.Pallet;
+import com.example.timer.Pallet.PalletAdapter;
 import com.example.timer.R;
 import com.example.timer.Model.Timer;
 import com.example.timer.ViewModel.MainViewModel;
+
+import java.util.ArrayList;
 
 public class CreateActivity extends AppCompatActivity {
 
@@ -27,12 +34,18 @@ public class CreateActivity extends AppCompatActivity {
     private boolean needRefresh;
     private int mode;
     public MainViewModel mainViewModel;
-
+    String color;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
         mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
+
+
+        GridView palletGridView = (GridView) findViewById(R.id.palletGridView);
+        ArrayList<Pallet> pallets = Pallet.getPallet();
+        PalletAdapter palletAdapter = new PalletAdapter(this, pallets);
+        palletGridView.setAdapter(palletAdapter);
 
         this.editName = (EditText)this.findViewById(R.id.edit_name);
         this.editPreparation = (EditText)this.findViewById(R.id.edit_preparation);
@@ -44,14 +57,19 @@ public class CreateActivity extends AppCompatActivity {
         this.editPause = (EditText)this.findViewById(R.id.edit_pause);
 
         this.buttonApply = (Button)findViewById(R.id.button_apply);
-
         this.buttonApply.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)  {
                 buttonSaveClicked();
                 buttonCancelClicked();
             }
         });
-
+        palletGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+            {
+                color = pallets.get(position).getColor();
+            }
+        });
 
         Intent intent = this.getIntent();
         this.timer = (Timer) intent.getSerializableExtra("timer");
@@ -67,6 +85,7 @@ public class CreateActivity extends AppCompatActivity {
             this.editCycleCount.setText(timer.getCycleCount());
             this.editSetCount.setText(timer.getSetCount());
             this.editPause.setText(timer.getPauseTime());
+            color = timer.getColor();
         }
     }
 
@@ -82,7 +101,7 @@ public class CreateActivity extends AppCompatActivity {
 
         if(name.equals("") || preparation.equals("") || warm.equals("")
                 || work.equals("") || relaxation.equals("") || cycle.equals("")
-                || set.equals("") || pause.equals("")) {
+                || set.equals("") || pause.equals("") || color == null){
             Toast.makeText(getApplicationContext(),
                     "Please enter empty edit", Toast.LENGTH_SHORT).show();
             return;
@@ -90,11 +109,11 @@ public class CreateActivity extends AppCompatActivity {
 
         if(mode == MODE_CREATE )
         {
-            mainViewModel.addTimer(name, preparation, warm, work, relaxation, cycle, set, pause);
+            mainViewModel.addTimer(name, preparation, warm, work, relaxation, cycle, set, pause, color);
         }
         else
         {
-           mainViewModel.updateTimer(timer, name, preparation, warm, work, relaxation, cycle, set, pause);
+           mainViewModel.updateTimer(timer, name, preparation, warm, work, relaxation, cycle, set, pause, color);
         }
         this.needRefresh = true;
         this.onBackPressed();

@@ -12,13 +12,14 @@ public class Timer implements Serializable {
     private  String cycleCount;
     private  String setCount;
     private  String pauseTime;
+    private  String color;
 
     public Timer(){}
 
     public Timer(String timerName, String preparationTime,
                  String warmTime, String workTime,
                  String relaxationTime, String cycleCount,
-                 String setCount, String pauseTime)
+                 String setCount, String pauseTime, String color)
     {
         this.timerName = timerName;
         this.preparationTime = preparationTime;
@@ -28,13 +29,14 @@ public class Timer implements Serializable {
         this.cycleCount = cycleCount;
         this.setCount = setCount;
         this.pauseTime = pauseTime;
+        this.color = color;
     }
 
     public Timer( int timerId, String timerName,
                   String preparationTime, String warmTime,
                   String workTime, String relaxationTime,
                   String cycleCount, String setCount,
-                  String pauseTime)
+                  String pauseTime, String color)
     {
         this.timerName = timerName;
         this.timerId = timerId;
@@ -45,6 +47,7 @@ public class Timer implements Serializable {
         this.cycleCount = cycleCount;
         this.setCount = setCount;
         this.pauseTime = pauseTime;
+        this.color = color;
     }
 
     public int getTimerId() {
@@ -122,5 +125,13 @@ public class Timer implements Serializable {
     @Override
     public String toString()  {
         return this.timerName;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

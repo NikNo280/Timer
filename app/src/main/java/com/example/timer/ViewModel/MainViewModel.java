@@ -1,6 +1,7 @@
 package com.example.timer.ViewModel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -24,16 +25,17 @@ public class MainViewModel extends AndroidViewModel {
     public void addTimer(String timerName, String preparationTime,
                          String warmTime, String workTime,
                          String relaxationTime, String cycleCount,
-                         String setCount, String pauseTime)
+                         String setCount, String pauseTime, String color)
     {
-        Timer timer= new Timer(timerName, preparationTime, warmTime, workTime, relaxationTime, cycleCount, setCount, pauseTime);
+        Timer timer= new Timer(timerName, preparationTime, warmTime, workTime, relaxationTime, cycleCount, setCount, pauseTime, color);
+        Log.d("Color", timer.getColor());
         db.addTimer(timer);
     }
 
     public void updateTimer(Timer timer, String timerName, String preparationTime,
                             String warmTime, String workTime,
                             String relaxationTime, String cycleCount,
-                            String setCount, String pauseTime)
+                            String setCount, String pauseTime, String color)
     {
         timer.setTimerName(timerName);
         timer.setPreparationTime(preparationTime);
@@ -43,6 +45,8 @@ public class MainViewModel extends AndroidViewModel {
         timer.setCycleCount(cycleCount);
         timer.setSetCount(setCount);
         timer.setPauseTime(pauseTime);
+        timer.setColor(color);
+        Log.d("Color", timer.getColor());
         db.updateTimer(timer);
     }
 

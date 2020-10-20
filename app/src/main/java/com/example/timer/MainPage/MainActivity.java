@@ -21,6 +21,7 @@ import com.example.timer.DBHelper.DatabaseHelper;
 import com.example.timer.EditPage.CreateActivity;
 import com.example.timer.R;
 import com.example.timer.Model.Timer;
+import com.example.timer.Service.TimerService;
 import com.example.timer.TimerPage.TimerActivity;
 import com.example.timer.ViewModel.MainViewModel;
 
@@ -125,5 +126,12 @@ public class MainActivity extends AppCompatActivity {
                 listViewAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intentService = new Intent(this, TimerService.class);
+        stopService(intentService);
     }
 }

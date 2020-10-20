@@ -1,18 +1,23 @@
 package com.example.timer.TimerPage;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.timer.ViewModel.MainViewModel;
@@ -42,10 +47,10 @@ public class TimerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
         mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
-
         this.listView = (ListView) findViewById(R.id.listView);
         Intent intent = this.getIntent();
         this.timer = (Timer) intent.getSerializableExtra("timer");
+        listView.setBackgroundColor(Color.parseColor(timer.getColor()));
         timerList = mainViewModel.getTimerStringList(timer);
         this.btnStart = findViewById(R.id.button_start);
         this.textView_timer = findViewById(R.id.textView_timer);
