@@ -1,6 +1,7 @@
 package com.example.timer.ViewModel;
 
 import android.app.Application;
+import android.content.res.Configuration;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,9 +10,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.timer.DBHelper.DatabaseHelper;
 import com.example.timer.Model.Timer;
+import com.example.timer.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainViewModel extends AndroidViewModel {
     private final MutableLiveData<String> editTimer = new MutableLiveData<>("");
@@ -20,6 +23,7 @@ public class MainViewModel extends AndroidViewModel {
     }
     List<Integer> timerList = new ArrayList<Integer>();
     DatabaseHelper db = new DatabaseHelper(getApplication());
+
 
 
     public void addTimer(String timerName, String preparationTime,
@@ -79,27 +83,45 @@ public class MainViewModel extends AndroidViewModel {
     public List<String> getTimerStringList(Timer timer)
     {
         List<String> stringTimerList = new ArrayList<String>();
+        List<String> phase = new ArrayList<String>();
+        switch (db.getLanguage())
+        {
+            case "ru":
+                phase.add(". Подготовка : ");
+                phase.add(". Разминка : ");
+                phase.add(". Работа : ");
+                phase.add(". Отдых : ");
+                phase.add(". Пауза : ");
+                break;
+            case "en-US":
+                phase.add(". Preparation : ");
+                phase.add(". Warm : ");
+                phase.add(". Work : ");
+                phase.add(". Relaxation : ");
+                phase.add(". PauseTime : ");
+                break;
+        }
         int countCycle = Integer.parseInt(timer.getCycleCount());
         int countSet = Integer.parseInt(timer.getSetCount());
         int count = 1;
         for(int i = 0; i < countSet; i++)
         {
-            stringTimerList.add(count + ". Preparation : " + timer.getPreparationTime());
+            stringTimerList.add(count + phase.get(0) + timer.getPreparationTime());
             timerList.add(Integer.parseInt(timer.getPreparationTime()) * 1000);
             count++;
             for(int j = 0; j < countCycle; j++)
             {
-                stringTimerList.add(count + ". Warm : " + timer.getWarmTime());
+                stringTimerList.add(count + phase.get(1) + timer.getWarmTime());
                 timerList.add(Integer.parseInt(timer.getWarmTime()) * 1000);
                 count++;
-                stringTimerList.add(count + ". Work : " + timer.getWorkTime());
+                stringTimerList.add(count + phase.get(2) + timer.getWorkTime());
                 timerList.add(Integer.parseInt(timer.getWorkTime()) * 1000);
                 count++;
-                stringTimerList.add(count + ". Relaxation : " + timer.getRelaxationTime());
+                stringTimerList.add(count + phase.get(3)  + timer.getRelaxationTime());
                 timerList.add(Integer.parseInt(timer.getRelaxationTime()) * 1000);
                 count++;
             }
-            stringTimerList.add(count + ". PauseTime : " + timer.getPauseTime());
+            stringTimerList.add(count + phase.get(4) + timer.getPauseTime());
             timerList.add(Integer.parseInt(timer.getPauseTime()) * 1000);
             count++;
         }

@@ -35,7 +35,7 @@ public class TimerActivity extends AppCompatActivity {
     private List<String> timerList;
     private ArrayAdapter<String> listViewAdapter;
     public MainViewModel mainViewModel ;
-    Button btnStart, btnStop;
+    private Button btnStart, btnStop;
     Intent intentService;
 
     BroadcastReceiver br;
@@ -46,21 +46,25 @@ public class TimerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
+
         mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
-        this.listView = (ListView) findViewById(R.id.listView);
         Intent intent = this.getIntent();
         this.timer = (Timer) intent.getSerializableExtra("timer");
-        listView.setBackgroundColor(Color.parseColor(timer.getColor()));
+
+        this.listView = (ListView) findViewById(R.id.listView);
+        ConstraintLayout constraintLayout = findViewById(R.id.Constraint);
         timerList = mainViewModel.getTimerStringList(timer);
         this.btnStart = findViewById(R.id.button_start);
         this.textView_timer = findViewById(R.id.textView_timer);
         this.btnStop = findViewById(R.id.button_stop);
+
         this.listViewAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, this.timerList);
         this.listView.setAdapter(this.listViewAdapter);
+        listView.setBackgroundColor(Color.parseColor(timer.getColor()));
+        constraintLayout.setBackgroundColor(Color.parseColor(timer.getColor()));
 
         intentService = new Intent(this, TimerService.class).putExtra("list", mainViewModel.getIntList());
-
         btnStart.setOnClickListener(item -> {
             intentService.putExtra("operationCode", 1);
             startService(intentService);

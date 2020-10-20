@@ -4,8 +4,6 @@
     <string name="timer_page">Timer page</string>
     <string name="edit_page">Edit page</string>
     <string name="settings_page">Settings page</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="preparation">Preparation</string>
     <string name="warm_up">Warm-up</string>
     <string name="work">Work</string>
@@ -25,4 +23,12 @@
     <string name="stop">Stop</string>
     <string name="button_clear">Clear</string>
     <string name="button_add">Add</string>
+    <string name="settings">Settings</string>
+    <string name="textview_lg">Change of language</string>
+    <string name="textview_cl">Delete timers</string>
+    <string name="select">Select The Action</string>
+    <string name="view_timer">View Timer</string>
+    <string name="edit_timer">Edit Timer</string>
+    <string name="delete_timer">Delete timers</string>
+    <string name="delete_ok">. Are you sure you want to delete?</string>
 </resources>

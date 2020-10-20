@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.Context;
+import android.util.Log;
 
 import com.example.timer.Model.Timer;
 
@@ -16,13 +17,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
 
     // Database Version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     private static final String DATABASE_NAME = "TimersDB";
 
     // Table name: Note.
     private static final String TABLE_NAME = "Timer";
+    private static final  String TABLE_LG_NAME = "Language";
 
     public static final String TIMER_ID = "_id";
     public static final String TIMER_NAME = "name";
@@ -35,13 +37,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String PAUSE_TIME = "pauseTime";
     public static final String COLOR = "color";
 
+    public static final String TIMER_LG_ID = "_id";
+    public static final String TIMER_LG = "language";
+
     public DatabaseHelper(Context context)  {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String script = "CREATE TABLE " + TABLE_NAME + "("
+        String script1 = "CREATE TABLE " + TABLE_NAME + "("
                 + TIMER_ID + " INTEGER PRIMARY KEY,"
                 + TIMER_NAME + " TEXT,"
                 + PREPARATION_TIME + " TEXT,"
@@ -52,15 +57,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + SET_COUNT + " TEXT,"
                 + PAUSE_TIME + " TEXT,"
                 + COLOR + " TEXT" + ")";
-        db.execSQL(script);
+
+        String script2 = "CREATE TABLE " + TABLE_LG_NAME + "("
+                + TIMER_LG_ID + " INTEGER PRIMARY KEY,"
+                + TIMER_LG + " TEXT" + ")";
+        db.execSQL(script1);
+        db.execSQL(script2);
+
+        ContentValues values = new ContentValues();
+        values.put(TIMER_LG, "en-US");
+        db.insert(TABLE_LG_NAME, null, values);
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LG_NAME);
         onCreate(db);
     }
+
+    public String getLanguage()
+    {
+        String selectQuery = "SELECT  * FROM " + TABLE_LG_NAME;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        cursor.moveToFirst();
+        String language = cursor.getString(1);
+        Log.d("LG ", language);
+        return language;
+    }
+
+
+    public int updateLanguage(String language) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String selectQuery = "SELECT  * FROM " + TABLE_LG_NAME;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        cursor.moveToFirst();
+        values.put(TIMER_LG, language);
+
+        // updating row
+        return db.update(TABLE_LG_NAME, values, TIMER_LG_ID + " = ?",
+                new String[]{String.valueOf(Integer.parseInt(cursor.getString(0)))});
+    }
+
 
     public void addTimer(Timer timer) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -94,8 +136,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, new String[] { TIMER_ID,
                         TIMER_NAME, PREPARATION_TIME , WARM_TIME,
-                WORK_TIME, RELAXATION_TIME, CYCLE_TIME,
-                SET_COUNT, PAUSE_TIME, COLOR}, TIMER_ID + "=?",
+                        WORK_TIME, RELAXATION_TIME, CYCLE_TIME,
+                        SET_COUNT, PAUSE_TIME, COLOR}, TIMER_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();

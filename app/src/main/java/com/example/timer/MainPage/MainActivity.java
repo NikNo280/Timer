@@ -6,12 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -22,6 +24,7 @@ import com.example.timer.EditPage.CreateActivity;
 import com.example.timer.R;
 import com.example.timer.Model.Timer;
 import com.example.timer.Service.TimerService;
+import com.example.timer.SettingsPage.SettingsActivity;
 import com.example.timer.TimerPage.TimerActivity;
 import com.example.timer.ViewModel.MainViewModel;
 
@@ -58,11 +61,25 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CreateActivity.class);
             this.startActivityForResult(intent, MY_REQUEST_CODE);
         });
-        btnClear.setOnClickListener(item -> {
-            mainViewModel.deleteTimers();
-            timerList.clear();
-            listViewAdapter.notifyDataSetChanged();
-        });
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch(id){
+            case R.id.action_settings :
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -70,11 +87,11 @@ public class MainActivity extends AppCompatActivity {
                                     ContextMenu.ContextMenuInfo menuInfo)    {
 
         super.onCreateContextMenu(menu, view, menuInfo);
-        menu.setHeaderTitle("Select The Action");
+        menu.setHeaderTitle(R.string.select);
 
-        menu.add(0, MENU_ITEM_VIEW , 0, "View Timer");
-        menu.add(0, MENU_ITEM_EDIT , 2, "Edit Timer");
-        menu.add(0, MENU_ITEM_DELETE, 4, "Delete Timer");
+        menu.add(0, MENU_ITEM_VIEW , 0, R.string.view_timer);
+        menu.add(0, MENU_ITEM_EDIT , 2, R.string.edit_timer);
+        menu.add(0, MENU_ITEM_DELETE, 4, R.string.delete_timer);
     }
 
     @Override
@@ -96,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(item.getItemId() == MENU_ITEM_DELETE){
             new AlertDialog.Builder(this)
-                    .setMessage(selectedTimer.getTimerName()+". Are you sure you want to delete?")
+                    .setMessage(selectedTimer.getTimerName() + R.string.delete_ok)
                     .setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
