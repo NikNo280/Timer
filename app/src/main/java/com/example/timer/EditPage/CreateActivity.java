@@ -31,10 +31,10 @@ public class CreateActivity extends AppCompatActivity {
     private EditText editName, editPreparation, editWarm, editWork, editRelaxationTime, editCycleCount, editSetCount, editPause;
     private Button buttonApply;
     private Timer timer;
-    private boolean needRefresh;
     private int mode;
     public MainViewModel mainViewModel;
     String color;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +115,6 @@ public class CreateActivity extends AppCompatActivity {
         {
            mainViewModel.updateTimer(timer, name, preparation, warm, work, relaxation, cycle, set, pause, color);
         }
-        this.needRefresh = true;
         this.onBackPressed();
     }
 
@@ -124,13 +123,4 @@ public class CreateActivity extends AppCompatActivity {
         this.onBackPressed();
     }
 
-
-    @Override
-    public void finish() {
-
-        Intent data = new Intent();
-        data.putExtra("needRefresh", needRefresh);
-        this.setResult(Activity.RESULT_OK, data);
-        super.finish();
-    }
 }

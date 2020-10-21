@@ -3,6 +3,7 @@ package com.example.timer.SettingsPage;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import java.util.Locale;
 public class SettingsActivity extends AppCompatActivity {
 
     public MainViewModel mainViewModel;
+    private boolean needRefresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
         Button btnClear = findViewById(R.id.button_clear);
         btnClear.setOnClickListener(item -> {
             mainViewModel.deleteTimers();
+            needRefresh = true;
         });
 
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.spinner_language, android.R.layout.simple_spinner_dropdown_item);
@@ -49,6 +53,10 @@ public class SettingsActivity extends AppCompatActivity {
                     getBaseContext().getResources().updateConfiguration(configuration, null);
                     DatabaseHelper db = new DatabaseHelper(getApplication());
                     db.updateLanguage("en-US");
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(getIntent());
+                    overridePendingTransition(0, 0);
                 }
                 else if(selectedItemPosition == 2)
                 {
@@ -59,8 +67,12 @@ public class SettingsActivity extends AppCompatActivity {
                     getBaseContext().getResources().updateConfiguration(configuration, null);
                     DatabaseHelper db = new DatabaseHelper(getApplication());
                     db.updateLanguage("ru");
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(getIntent());
+                    overridePendingTransition(0, 0);
                 }
-
+                needRefresh = true;
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -69,9 +81,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+    public void finish() {
+
+        Intent data = new Intent();
+        data.putExtra("needRefresh", needRefresh);
+        this.setResult(Activity.RESULT_OK, data);
+        super.finish();
     }
 }

@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public ArrayAdapter<Timer> listViewAdapter;
     public ListView listView;
     public MainViewModel mainViewModel;
+    Button btnAdd, btnClear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
 
         listView = (ListView) findViewById(R.id.listView);
-        Button btnAdd = findViewById(R.id.button_add);
-        Button btnClear = findViewById(R.id.button_clear);
+        btnAdd = findViewById(R.id.button_add);
+        btnClear = findViewById(R.id.button_clear);
         timerList.addAll(mainViewModel.getTimerList());
         listViewAdapter = new ArrayAdapter<Timer>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, timerList);
@@ -113,13 +114,15 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(item.getItemId() == MENU_ITEM_DELETE){
             new AlertDialog.Builder(this)
-                    .setMessage(selectedTimer.getTimerName() + R.string.delete_ok)
+                    .setMessage(selectedTimer.getTimerName() + ". Are you sure you want to delete?")
                     .setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             mainViewModel.deleteTimer(selectedTimer);
                             timerList.remove(selectedTimer);
                             listViewAdapter.notifyDataSetChanged();
+                            btnClear.notify();
+                            btnAdd.notify();
                         }
                     })
                     .setNegativeButton("No", null)
@@ -131,18 +134,14 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == Activity.RESULT_OK && requestCode == MY_REQUEST_CODE) {
-            boolean needRefresh = data.getBooleanExtra("needRefresh", true);
-            if (needRefresh) {
-                timerList.clear();
-                timerList.addAll(mainViewModel.getTimerList());
-                listViewAdapter.notifyDataSetChanged();
-            }
-        }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 
     @Override
