@@ -5,8 +5,12 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,72 +24,70 @@ import com.example.timer.ViewModel.MainViewModel;
 
 import java.util.Locale;
 
-public class SettingsActivity extends AppCompatActivity {
-
-    public MainViewModel mainViewModel;
-    private boolean needRefresh;
+public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener, View.OnClickListener{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Locale locale = new Locale(prefs.getString("language", "eu-US"));
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        float coef = (float)prefs.getInt("size", 1);
+        configuration.locale = locale;
+        configuration.fontScale = coef / 10;
+        getBaseContext().getResources().updateConfiguration(configuration, null);
+        if(prefs.getString("theme", "D").equals("D"))
+        {
+            setTheme(R.style.AppThemeDark);
+        }
+        else if(prefs.getString("theme", "D").equals("L"))
+        {
+            setTheme(R.style.AppThemeLite);
+        }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-        mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
-        Button btnClear = findViewById(R.id.button_clear);
-        btnClear.setOnClickListener(item -> {
-            mainViewModel.deleteTimers();
-            needRefresh = true;
-        });
+        setContentView(R.layout.button_clear);
+        addPreferencesFromResource(R.xml.settings);
+        prefs.registerOnSharedPreferenceChangeListener(this);
+    }
 
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.spinner_language, android.R.layout.simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner spinner_language = findViewById(R.id.spinner_language);
-        spinner_language.setAdapter(adapter);
-        spinner_language.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent,
-                                       View itemSelected, int selectedItemPosition, long selectedId) {
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        if(prefs.getString("theme", "D").equals("D"))
+        {
+            setTheme(R.style.AppThemeDark);
+        }
+        else if(prefs.getString("theme", "D").equals("L"))
+        {
+            setTheme(R.style.AppThemeLite);
+        }
+        Locale locale = new Locale(prefs.getString("language", "eu-US"));
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        float coef = (float)prefs.getInt("size", 1);
+        configuration.fontScale = coef / 10;
+        getBaseContext().getResources().updateConfiguration(configuration, null);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
+    }
 
-                if(selectedItemPosition == 1)
-                {
-                    Locale locale = new Locale("en-US");
-                    Locale.setDefault(locale);
-                    Configuration configuration = new Configuration();
-                    configuration.locale = locale;
-                    getBaseContext().getResources().updateConfiguration(configuration, null);
-                    DatabaseHelper db = new DatabaseHelper(getApplication());
-                    db.updateLanguage("en-US");
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(getIntent());
-                    overridePendingTransition(0, 0);
-                }
-                else if(selectedItemPosition == 2)
-                {
-                    Locale locale = new Locale("ru");
-                    Locale.setDefault(locale);
-                    Configuration configuration = new Configuration();
-                    configuration.locale = locale;
-                    getBaseContext().getResources().updateConfiguration(configuration, null);
-                    DatabaseHelper db = new DatabaseHelper(getApplication());
-                    db.updateLanguage("ru");
-                    finish();
-                    overridePendingTransition(0, 0);
-                    startActivity(getIntent());
-                    overridePendingTransition(0, 0);
-                }
-                needRefresh = true;
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
 
+    @Override
+    public void onClick(View v){
+        if(v.getId() == R.id.button_clear)
+        {
+            DatabaseHelper db = new DatabaseHelper(this);
+            db.deleteTimers();
+            Log.d("delete", "Yes");
+        }
     }
 
     @Override
     public void finish() {
-
-        Intent data = new Intent();
-        data.putExtra("needRefresh", needRefresh);
-        this.setResult(Activity.RESULT_OK, data);
         super.finish();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

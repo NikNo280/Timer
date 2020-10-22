@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.Context;
-import android.util.Log;
 
 import com.example.timer.Model.Timer;
 
@@ -17,14 +16,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "SQLite";
 
     // Database Version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 7;
 
     // Database Name
     private static final String DATABASE_NAME = "TimersDB";
 
     // Table name: Note.
     private static final String TABLE_NAME = "Timer";
-    private static final  String TABLE_LG_NAME = "Language";
 
     public static final String TIMER_ID = "_id";
     public static final String TIMER_NAME = "name";
@@ -36,9 +34,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SET_COUNT = "setCount";
     public static final String PAUSE_TIME = "pauseTime";
     public static final String COLOR = "color";
-
-    public static final String TIMER_LG_ID = "_id";
-    public static final String TIMER_LG = "language";
 
     public DatabaseHelper(Context context)  {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -58,15 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + PAUSE_TIME + " TEXT,"
                 + COLOR + " TEXT" + ")";
 
-        String script2 = "CREATE TABLE " + TABLE_LG_NAME + "("
-                + TIMER_LG_ID + " INTEGER PRIMARY KEY,"
-                + TIMER_LG + " TEXT" + ")";
         db.execSQL(script1);
-        db.execSQL(script2);
-
-        ContentValues values = new ContentValues();
-        values.put(TIMER_LG, "en-US");
-        db.insert(TABLE_LG_NAME, null, values);
     }
 
 
@@ -74,33 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LG_NAME);
         onCreate(db);
-    }
-
-    public String getLanguage()
-    {
-        String selectQuery = "SELECT  * FROM " + TABLE_LG_NAME;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        cursor.moveToFirst();
-        String language = cursor.getString(1);
-        Log.d("LG ", language);
-        return language;
-    }
-
-
-    public int updateLanguage(String language) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        String selectQuery = "SELECT  * FROM " + TABLE_LG_NAME;
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        cursor.moveToFirst();
-        values.put(TIMER_LG, language);
-
-        // updating row
-        return db.update(TABLE_LG_NAME, values, TIMER_LG_ID + " = ?",
-                new String[]{String.valueOf(Integer.parseInt(cursor.getString(0)))});
     }
 
 

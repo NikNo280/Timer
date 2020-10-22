@@ -31,4 +31,11 @@
     <string name="edit_timer">Edit Timer</string>
     <string name="delete_timer">Delete timers</string>
     <string name="delete_ok">. Are you sure you want to delete?</string>
+    <string name="language_selection">Language selection</string>
+    <string name="font_settings">Font settings</string>
+    <string name="change_theme">Change theme</string>
+    <string name="delete_timers">Delete timers</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="select_value">Select the desired value</string>
 </resources>

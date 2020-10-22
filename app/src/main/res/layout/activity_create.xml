@@ -18,7 +18,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:text="@string/name"
-                android:textSize="36sp" />
+                android:textSize="20sp" />
 
 
             <EditText
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="@string/preparation"
-            android:textSize="36sp" />
+            android:textSize="20sp" />
 
         <TableRow
             android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:text="@string/warm_up"
-            android:textSize="36sp" />
+            android:textSize="20sp" />
 
         <TableRow
             android:layout_width="wrap_content"
@@ -84,7 +84,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:text="@string/work"
-            android:textSize="36sp" />
+            android:textSize="20sp" />
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -109,7 +109,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:text="@string/relaxation"
-            android:textSize="36sp" />
+            android:textSize="20sp" />
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -132,7 +132,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:text="@string/cycle"
-            android:textSize="36sp" />
+            android:textSize="20sp" />
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -155,7 +155,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:text="@string/set"
-            android:textSize="36sp" />
+            android:textSize="20sp" />
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -178,7 +178,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:text="@string/pause"
-            android:textSize="36sp" />
+            android:textSize="20sp" />
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="match_parent">

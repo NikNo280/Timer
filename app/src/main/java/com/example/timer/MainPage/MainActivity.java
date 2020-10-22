@@ -2,10 +2,16 @@ package com.example.timer.MainPage;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.TypedValue;
 import android.view.ContextMenu;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,8 +36,9 @@ import com.example.timer.ViewModel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int MENU_ITEM_VIEW = 111;
     private static final int MENU_ITEM_EDIT = 222;
@@ -46,13 +53,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if(prefs.getString("theme", "D").equals("D"))
+        {
+            setTheme(R.style.AppThemeDark);
+        }
+        else if(prefs.getString("theme", "D").equals("L"))
+        {
+            setTheme(R.style.AppThemeLite);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
         listView = (ListView) findViewById(R.id.listView);
         btnAdd = findViewById(R.id.button_add);
-        btnClear = findViewById(R.id.button_clear);
         timerList.addAll(mainViewModel.getTimerList());
         listViewAdapter = new ArrayAdapter<Timer>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, timerList);
@@ -149,5 +165,13 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Intent intentService = new Intent(this, TimerService.class);
         stopService(intentService);
+    }
+
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Locale locale = new Locale(prefs.getString("language", "eu-US"));
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        getBaseContext().getResources().updateConfiguration(configuration, null);
     }
 }

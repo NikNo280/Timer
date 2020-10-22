@@ -18,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        style="@style/TinySizeStyle"
         android:id="@+id/button_add"
         android:layout_width="409dp"
         android:layout_height="61dp"

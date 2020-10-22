@@ -8,8 +8,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,6 +46,15 @@ public class TimerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if(prefs.getString("theme", "D").equals("D"))
+        {
+            setTheme(R.style.AppThemeDark);
+        }
+        else if(prefs.getString("theme", "D").equals("L"))
+        {
+            setTheme(R.style.AppThemeLite);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
 
@@ -98,5 +109,12 @@ public class TimerActivity extends AppCompatActivity {
         super.onDestroy();
         unregisterReceiver(br);
         stopService(intentService);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        intentService.putExtra("operationCode", 2);
+        startService(intentService);
     }
 }

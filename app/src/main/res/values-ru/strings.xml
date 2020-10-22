@@ -32,4 +32,11 @@
     <string name="edit_timer">Изменениие таймера</string>
     <string name="delete_timer">Удаление таймера</string>
     <string name="delete_ok">. Вы уверены, что хотите удалить?</string>
+    <string name="language_selection">Смена языка</string>
+    <string name="font_settings">Настройки шрифта</string>
+    <string name="change_theme">Смена темы</string>
+    <string name="delete_timers">Удалить таймеры</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="select_value">Выберите нужное значение</string>
 </resources>

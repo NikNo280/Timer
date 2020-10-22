@@ -1,7 +1,9 @@
 package com.example.timer.ViewModel;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -32,7 +34,6 @@ public class MainViewModel extends AndroidViewModel {
                          String setCount, String pauseTime, String color)
     {
         Timer timer= new Timer(timerName, preparationTime, warmTime, workTime, relaxationTime, cycleCount, setCount, pauseTime, color);
-        Log.d("Color", timer.getColor());
         db.addTimer(timer);
     }
 
@@ -50,7 +51,6 @@ public class MainViewModel extends AndroidViewModel {
         timer.setSetCount(setCount);
         timer.setPauseTime(pauseTime);
         timer.setColor(color);
-        Log.d("Color", timer.getColor());
         db.updateTimer(timer);
     }
 
@@ -84,7 +84,8 @@ public class MainViewModel extends AndroidViewModel {
     {
         List<String> stringTimerList = new ArrayList<String>();
         List<String> phase = new ArrayList<String>();
-        switch (db.getLanguage())
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
+        switch (prefs.getString("language", "eu-US"))
         {
             case "ru":
                 phase.add(". Подготовка : ");
