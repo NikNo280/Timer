@@ -19,14 +19,25 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainViewModel extends AndroidViewModel {
-    private final MutableLiveData<String> editTimer = new MutableLiveData<>("");
-    public MainViewModel(@NonNull Application application) {
-        super(application);
-    }
+
     List<Integer> timerList = new ArrayList<Integer>();
     DatabaseHelper db = new DatabaseHelper(getApplication());
 
+    public MainViewModel(@NonNull Application application) {
+        super(application);
+    }
 
+    public Configuration getConfiguration()
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
+        float coef = (float)prefs.getInt("size", 1);
+        Locale locale = new Locale(prefs.getString("language", "eu-US"));
+        Locale.setDefault(locale);
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        configuration.fontScale = coef / 10;
+        return configuration;
+    }
 
     public void addTimer(String timerName, String preparationTime,
                          String warmTime, String workTime,
@@ -80,6 +91,29 @@ public class MainViewModel extends AndroidViewModel {
         return timers;
     }
 
+    public void initializationTimerIntegerList(Timer timer)
+    {
+        int countCycle = Integer.parseInt(timer.getCycleCount());
+        int countSet = Integer.parseInt(timer.getSetCount());
+        int count = 1;
+        for(int i = 0; i < countSet; i++)
+        {
+            timerList.add(Integer.parseInt(timer.getPreparationTime()) * 1000);
+            count++;
+            for(int j = 0; j < countCycle; j++)
+            {
+                timerList.add(Integer.parseInt(timer.getWarmTime()) * 1000);
+                count++;
+                timerList.add(Integer.parseInt(timer.getWorkTime()) * 1000);
+                count++;
+                timerList.add(Integer.parseInt(timer.getRelaxationTime()) * 1000);
+                count++;
+            }
+            timerList.add(Integer.parseInt(timer.getPauseTime()) * 1000);
+            count++;
+        }
+    }
+
     public List<String> getTimerStringList(Timer timer)
     {
         List<String> stringTimerList = new ArrayList<String>();
@@ -108,22 +142,17 @@ public class MainViewModel extends AndroidViewModel {
         for(int i = 0; i < countSet; i++)
         {
             stringTimerList.add(count + phase.get(0) + timer.getPreparationTime());
-            timerList.add(Integer.parseInt(timer.getPreparationTime()) * 1000);
             count++;
             for(int j = 0; j < countCycle; j++)
             {
                 stringTimerList.add(count + phase.get(1) + timer.getWarmTime());
-                timerList.add(Integer.parseInt(timer.getWarmTime()) * 1000);
                 count++;
                 stringTimerList.add(count + phase.get(2) + timer.getWorkTime());
-                timerList.add(Integer.parseInt(timer.getWorkTime()) * 1000);
                 count++;
                 stringTimerList.add(count + phase.get(3)  + timer.getRelaxationTime());
-                timerList.add(Integer.parseInt(timer.getRelaxationTime()) * 1000);
                 count++;
             }
             stringTimerList.add(count + phase.get(4) + timer.getPauseTime());
-            timerList.add(Integer.parseInt(timer.getPauseTime()) * 1000);
             count++;
         }
         return stringTimerList;

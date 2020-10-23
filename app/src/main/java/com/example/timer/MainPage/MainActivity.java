@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity{
 
     private static final int MENU_ITEM_VIEW = 111;
     private static final int MENU_ITEM_EDIT = 222;
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if(prefs.getString("theme", "D").equals("D"))
         {
@@ -64,11 +65,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
-        prefs.registerOnSharedPreferenceChangeListener(this);
-
-        listView = (ListView) findViewById(R.id.listView);
-        btnAdd = findViewById(R.id.button_add);
+        listView = findViewById(R.id.listView);
+        btnAdd   = findViewById(R.id.button_add);
         timerList.addAll(mainViewModel.getTimerList());
         listViewAdapter = new ArrayAdapter<Timer>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, timerList);
@@ -83,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
@@ -160,18 +157,4 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         overridePendingTransition(0, 0);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Intent intentService = new Intent(this, TimerService.class);
-        stopService(intentService);
-    }
-
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Locale locale = new Locale(prefs.getString("language", "eu-US"));
-        Locale.setDefault(locale);
-        Configuration configuration = new Configuration();
-        configuration.locale = locale;
-        getBaseContext().getResources().updateConfiguration(configuration, null);
-    }
 }

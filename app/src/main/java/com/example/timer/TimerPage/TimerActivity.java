@@ -32,12 +32,13 @@ import java.util.List;
 public class TimerActivity extends AppCompatActivity {
 
     private Timer timer;
-    private ListView listView;
-    private TextView textView_timer;
-    private List<String> timerList;
-    private ArrayAdapter<String> listViewAdapter;
+    public ListView listView;
+    public TextView textView_timer;
+    public List<String> timerList;
+    public ArrayAdapter<String> listViewAdapter;
     public MainViewModel mainViewModel ;
-    private Button btnStart, btnStop;
+    public Button btnStart, btnStop;
+    public ConstraintLayout constraintLayout;
     Intent intentService;
 
     BroadcastReceiver br;
@@ -46,6 +47,7 @@ public class TimerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if(prefs.getString("theme", "D").equals("D"))
         {
@@ -58,20 +60,20 @@ public class TimerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
 
-        mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
         Intent intent = this.getIntent();
         this.timer = (Timer) intent.getSerializableExtra("timer");
-
-        this.listView = (ListView) findViewById(R.id.listView);
-        ConstraintLayout constraintLayout = findViewById(R.id.Constraint);
+        mainViewModel.initializationTimerIntegerList(timer);
         timerList = mainViewModel.getTimerStringList(timer);
-        this.btnStart = findViewById(R.id.button_start);
-        this.textView_timer = findViewById(R.id.textView_timer);
-        this.btnStop = findViewById(R.id.button_stop);
 
-        this.listViewAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, this.timerList);
-        this.listView.setAdapter(this.listViewAdapter);
+        listView = findViewById(R.id.listView);
+        constraintLayout = findViewById(R.id.Constraint);
+        btnStart = findViewById(R.id.button_start);
+        textView_timer = findViewById(R.id.textView_timer);
+        btnStop = findViewById(R.id.button_stop);
+
+        listViewAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, timerList);
+        listView.setAdapter(listViewAdapter);
         listView.setBackgroundColor(Color.parseColor(timer.getColor()));
         constraintLayout.setBackgroundColor(Color.parseColor(timer.getColor()));
 
@@ -100,8 +102,8 @@ public class TimerActivity extends AppCompatActivity {
                 textView_timer.setText("" + result);
             }
         };
-        IntentFilter intFilt = new IntentFilter(BROADCAST_ACTION);
-        registerReceiver(br, intFilt);
+        IntentFilter intFilter = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(br, intFilter);
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.example.timer.ViewModel.MainViewModel;
 
 import java.util.Locale;
 
-public class SplashScreen extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SplashScreen extends AppCompatActivity{
 
     private long ms=0;
     private long splashTime=2000;
@@ -30,6 +30,8 @@ public class SplashScreen extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        MainViewModel mainViewModel  = ViewModelProviders.of(this).get(MainViewModel.class);
+        getBaseContext().getResources().updateConfiguration(mainViewModel.getConfiguration(), null);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if(prefs.getString("theme", "D").equals("D"))
         {
@@ -41,14 +43,6 @@ public class SplashScreen extends AppCompatActivity implements SharedPreferences
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        prefs.registerOnSharedPreferenceChangeListener(this);
-        float coef = (float)prefs.getInt("size", 1);
-        Locale locale = new Locale(prefs.getString("language", "eu-US"));
-        Locale.setDefault(locale);
-        Configuration configuration = new Configuration();
-        configuration.locale = locale;
-        configuration.fontScale = coef / 10;
-        getBaseContext().getResources().updateConfiguration(configuration, null);
         Thread mythread = new Thread() {
             public void run() {
                 try {
@@ -65,14 +59,5 @@ public class SplashScreen extends AppCompatActivity implements SharedPreferences
             }
         };
         mythread.start();
-    }
-
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Locale locale = new Locale(prefs.getString("language", "eu-US"));
-        Locale.setDefault(locale);
-        Configuration configuration = new Configuration();
-        configuration.locale = locale;
-        getBaseContext().getResources().updateConfiguration(configuration, null);
-
     }
 }
